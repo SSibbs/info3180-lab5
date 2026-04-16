@@ -102,7 +102,7 @@ def movies():
 
         # 5. Return JSON response
         return jsonify({
-            "message": "Movie Successfully added",
+            "message": "File Upload Successful",
             "title": title,
             "poster": filename,
             "description": description
@@ -114,11 +114,21 @@ def movies():
             "errors": form_errors(form)
         }), 400
 
+#def form_errors(form):
+ #   error_list = []
+  #  for field, errors in form.errors.items():
+   #     for error in errors:
+    #        error_list.append({field: error})
+    #return error_list
+
 def form_errors(form):
     error_list = []
+
     for field, errors in form.errors.items():
         for error in errors:
-            error_list.append({field: error})
+            message = f"Error in {field} field - {error}"
+            error_list.append(message)
+
     return error_list
 
 

@@ -24,7 +24,6 @@ const router = createRouter({
       name: 'add-movie',
       component: AddMovieFormView
     }
-
   
   ]
 })

@@ -13,7 +13,10 @@ import os
 from app.forms import MovieForm
 from app.models import Movie
 from werkzeug.utils import secure_filename
+from app import db
 
+from flask_wtf.csrf import generate_csrf
+from flask import jsonify
 
 ###
 # Routing for your application.
@@ -65,7 +68,8 @@ def add_header(response):
 @app.errorhandler(404)
 def page_not_found(error):
     """Custom 404 page."""
-    return render_template('404.html'), 404
+    #return render_template('404.html'), 404
+    return jsonify({"error": "Not Found"}), 404
 
 
 @app.route('/api/v1/movies', methods=['POST'])
@@ -103,10 +107,12 @@ def movies():
             "poster": filename,
             "description": description
         }), 201
+    else:
+        print(form.errors)
 
-    return jsonify({
-        "errors": form_errors(form)
-    }), 400
+        return jsonify({
+            "errors": form_errors(form)
+        }), 400
 
 def form_errors(form):
     error_list = []
@@ -114,3 +120,8 @@ def form_errors(form):
         for error in errors:
             error_list.append({field: error})
     return error_list
+
+
+@app.route('/api/v1/csrf-token', methods=['GET'])
+def get_csrf():
+    return jsonify({'csrf_token': generate_csrf()})

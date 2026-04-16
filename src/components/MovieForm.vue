@@ -72,8 +72,10 @@ function saveMovie() {
       const data = await response.json();
 
       if (!response.ok) {
-        errors.value = data.errors.map(e => Object.values(e)[0]);
         successMessage.value = "";
+        errors.value = data.errors.map(e => Object.values(e)[0]);
+
+
         return;
       }
 

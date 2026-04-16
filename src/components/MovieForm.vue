@@ -73,7 +73,7 @@ function saveMovie() {
 
       if (!response.ok) {
         successMessage.value = "";
-        errors.value = data.errors.map(e => Object.values(e)[0]);
+        errors.value = data.errors;
 
 
         return;

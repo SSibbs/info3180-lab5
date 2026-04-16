@@ -18,6 +18,11 @@ from app import db
 from flask_wtf.csrf import generate_csrf
 from flask import jsonify
 
+from flask import send_file
+from flask import send_from_directory
+
+
+
 ###
 # Routing for your application.
 ###
@@ -87,7 +92,12 @@ def movies():
         filename = secure_filename(poster_file.filename)
 
         # 3. Save file to uploads folder
-        upload_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        #upload_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        #upload_path = os.path.join("app", "static", "uploads", filename)
+        upload_path = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "static", "uploads", filename)
+)
+        #print("UPLOAD FOLDER:", app.config['UPLOAD_FOLDER'])
         poster_file.save(upload_path)
 
         # 4. Save to database
@@ -135,3 +145,26 @@ def form_errors(form):
 @app.route('/api/v1/csrf-token', methods=['GET'])
 def get_csrf():
     return jsonify({'csrf_token': generate_csrf()})
+
+@app.route('/api/v1/movies', methods=['GET'])
+def get_movies():
+    movies = Movie.query.all()
+
+    data = []
+
+    for movie in movies:
+        data.append({
+            "id": movie.id,
+            "title": movie.title,
+            "description": movie.description,
+            "poster": movie.poster
+        })
+
+    return jsonify({"movies": data})
+
+@app.route("/api/v1/posters/<filename>")
+def get_poster(filename):
+    return send_from_directory(
+        os.path.join(os.path.dirname(__file__), "static", "uploads"),
+        filename
+    )
